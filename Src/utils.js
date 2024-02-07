@@ -1,14 +1,16 @@
-const fs = require('fs');
-const { dirname: pathDirname, join } = require('path');
+import fs from "fs";
 
-const filename = __filename;
-const dirName = pathDirname(filename);
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+export const __filename = fileURLToPath(import.meta.url);
+export const __dirname = dirname(__filename);
 
 async function readFile(file) {
   try {
-    let readFilename = join(dirName, file);
-    console.log("readfile", readFilename);
-    let result = await fs.promises.readFile(join(dirName, file), "utf-8");
+    let readfilename = __dirname + "/" + file;
+    console.log("readfile", readfilename);
+    let result = await fs.promises.readFile(__dirname + "/" + file, "utf-8");
     let data = await JSON.parse(result);
     return data;
   } catch (err) {
@@ -18,7 +20,7 @@ async function readFile(file) {
 
 async function writeFile(file, data) {
   try {
-    await fs.promises.writeFile(join(dirName, file), JSON.stringify(data));
+    await fs.promises.writeFile(__dirname + "/" + file, JSON.stringify(data));
     return true;
   } catch (err) {
     console.log(err);
@@ -27,11 +29,11 @@ async function writeFile(file, data) {
 
 async function deleteFile(file) {
   try {
-    await fs.promises.unlink(join(dirName, file));
+    await fs.promises.unlink(__dirname + "/" + file);
     return true;
   } catch (err) {
     console.log(err);
   }
 }
 
-module.exports = { readFile, writeFile, deleteFile, filename, dirName };
+export default { readFile, writeFile, deleteFile };
